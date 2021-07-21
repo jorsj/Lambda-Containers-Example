@@ -7,21 +7,30 @@ def handler(event, context):
 
     session = boto3.session.Session(profile_name='sandbox')
 
-    bucket = event['Records'][0]['s3']['bucket']['name']
+    for record in event['Records']:
 
-    key = urllib.parse.unquote_plus(
-        event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+        eventName = record['eventName']
+        bucket = record['s3']['bucket']['name']
+        key = urllib.parse.unquote_plus(
+            record['s3']['object']['key'], encoding='utf-8')
+        uri = f's3://{bucket}/{key}'
 
-    ans = proc_anclaje(f's3://{bucket}/{key}', session)
+        if eventName == 'ObjectCreated:Put':
+            try:
+                ans = proc_anclaje(uri)
+                carga = proc_write(ans, session)
+                print(f'[{uri}]: Done!', carga)
+            except Exception as e:
+                print(f'[{uri}]: Error', e)
+        else:
+            print(f'[{uri}]: Skipped', eventName)
 
-    carga = proc_write(ans, session)
-
-    return 'All done boss!'
+    return 'End of function reached'
 
 
-def proc_anclaje(path, session):
+def proc_anclaje(uri, session):
 
-    tp = wr.s3.read_excel(path, session)
+    tp = wr.s3.read_excel(uri, session)
     location = tp.iloc[:, 0:2].drop_duplicates().values  # x, y
 
     if location.shape[0] != 1:
