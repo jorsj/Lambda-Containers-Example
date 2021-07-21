@@ -8,7 +8,6 @@ def handler(event, context):
     session = boto3.session.Session(profile_name='sandbox')
 
     for record in event['Records']:
-
         eventName = record['eventName']
         bucket = record['s3']['bucket']['name']
         key = urllib.parse.unquote_plus(
