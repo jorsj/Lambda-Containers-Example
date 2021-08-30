@@ -9,7 +9,7 @@ phases:
       - docker build . -t uach/ingress:latest
 #     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
       - docker login -u AWS -p $(aws ecr get-login-password --region $AWS_REGION) $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-      - aws ecr create-repository --repository-name uach/ingress --image-scanning-configuration scanOnPush=true --image-tag-mutability MUTABLE
+#      - aws ecr create-repository --repository-name uach/ingress --image-scanning-configuration scanOnPush=true --image-tag-mutability MUTABLE
       - docker tag uach/ingress:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest
       - aws lambda create-function \
