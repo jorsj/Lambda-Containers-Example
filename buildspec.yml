@@ -3,6 +3,8 @@ phases:
   install:
     runtime-versions:
       python: 3.8
+    commands:
+      - pip install --upgrade awscli
   build:
     commands:
       - echo $AWS_REGION $AWS_ACCOUNT_ID $FUNCTION_NAME
