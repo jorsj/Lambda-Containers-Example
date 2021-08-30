@@ -18,4 +18,4 @@ phases:
 #      - aws ecr create-repository --repository-name uach/ingress --image-scanning-configuration scanOnPush=true --image-tag-mutability MUTABLE
       - docker tag uach/ingress:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest
-      - aws lambda create-function --function-name $FUNCTION_NAME --role arn:aws:iam::$AWS_ACCOUNT_ID:role/service-role/Test-role-teskqivt --code 'ImageUri=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest' --package-type Image
+      - aws lambda create-function --function-name $FUNCTION_NAME --role arn:aws:iam::$AWS_ACCOUNT_ID:role/service-role/Test-role-teskqivt --code ImageUri=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest --package-type Image
