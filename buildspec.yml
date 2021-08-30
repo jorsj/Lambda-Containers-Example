@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+  build:
+    commands:
+      - pip install -r requirements.txt
+      - docker build . -t uach/ingress:latest
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - aws ecr create-repository --repository-name uach/ingress --image-scanning-configuration scanOnPush=true --image-tag-mutability MUTABLE
+      - docker tag uach/ingress:latest $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest
+      - docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest
+      - aws lambda create-function \
+        --function-name $FUNCTION_NAME \
+        --role arn:aws:iam::$ACCOUNT_ID:role/service-role/Test-role-teskqivt \
+        --code 'ImageUri=$ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/uach/ingress:latest' \
+        --package-type Image
